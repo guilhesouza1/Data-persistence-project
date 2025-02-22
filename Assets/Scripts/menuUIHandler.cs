@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,7 +14,7 @@ using UnityEditor;
 [DefaultExecutionOrder(1000)]
 public class menuUIHandler : MonoBehaviour
 {
-    [SerializeField] Text playerNameInput;
+    public GameObject playerNameInput;
 
     public void StartNew()
     {
@@ -20,7 +22,8 @@ public class menuUIHandler : MonoBehaviour
     }
     public void SetPlayerName()
     {
-        dataManager.instance.playerName = playerNameInput.text;
+        string playerNametxt = playerNameInput.GetComponent<TMP_InputField>().text;
+        dataManager.instance.playerName = playerNametxt;
     }
     public void Exit()
     {
