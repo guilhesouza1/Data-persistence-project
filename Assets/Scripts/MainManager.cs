@@ -12,21 +12,23 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text HighScoreText;
     public GameObject GameOverText;
-    
+    public int highScore;
+
     private bool m_Started = false;
-    private int m_Points;
-    
+    public int m_Points;
+
     private bool m_GameOver = false;
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
+
+        int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
         for (int i = 0; i < LineCount; ++i)
         {
             for (int x = 0; x < perLine; ++x)
@@ -37,6 +39,16 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        ScoreText.text = $"{dataManager.instance.playerName} : 0";
+        if (dataManager.instance.playerName == "")
+            {
+                dataManager.instance.playerName = "nobody";
+            }
+        HighScoreText.text = $"Best score: {dataManager.instance.highScoreName} : {dataManager.instance.highScore}";
+        if (dataManager.instance.highScoreName == "")
+            {
+                dataManager.instance.highScoreName = "nobody";
+            }
     }
     private void Update()
     {
@@ -65,11 +77,34 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"{dataManager.instance.playerName} : {m_Points}";
-    }
 
+        ScoreText.text = $"{dataManager.instance.playerName} : {m_Points}";
+   
+        if (m_Points > dataManager.instance.highScore) // If the current score is more than the last saved high score...
+        {
+            dataManager.instance.highScore = m_Points; // Set the high score to the current score
+            HighScoreText.text = $"Best score: {dataManager.instance.playerName} : {m_Points}";
+
+            if (dataManager.instance.playerName != dataManager.instance.highScoreName) // If the current name isn't the same as the last saved name...
+            {
+                // Set the saved name to be the same as the current name
+                dataManager.instance.highScoreName = dataManager.instance.playerName;
+            }
+            dataManager.instance.SaveNameAndScore();
+        }
+
+        else if (dataManager.instance.playerScore >= dataManager.instance.highScore) // If the current score is higher or the same as the saved high score...
+        {
+            // Set the saved high score to the highScore
+            dataManager.instance.highScore = highScore;
+            HighScoreText.text = $"Best score: {dataManager.instance.highScoreName} : {dataManager.instance.highScore}";
+            dataManager.instance.SaveNameAndScore();
+        }
+
+    }
     public void GameOver()
     {
+        //dataManager.instance.SaveNameAndScore();
         m_GameOver = true;
         GameOverText.SetActive(true);
     }

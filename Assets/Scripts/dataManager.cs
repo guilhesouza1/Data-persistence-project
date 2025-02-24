@@ -6,7 +6,9 @@ public class dataManager : MonoBehaviour
 {
     public static dataManager instance;
     public string playerName;
-    public int score;
+    public int playerScore;
+    public string highScoreName;
+    public int highScore;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
@@ -19,24 +21,30 @@ public class dataManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
 
-        LoadName();
+        LoadNameAndScore();
 
     }
     [Serializable]
     class SaveData
     {
         public string playerName;
+        public int playerScore;
+        public string highScoreName;
+        public int highScore;
     }
-    public void SaveName()
+    public void SaveNameAndScore()
     {
         SaveData data = new SaveData();
         data.playerName = playerName;
+        data.highScoreName = highScoreName;
+        data.highScore = highScore;
+        data.playerScore = playerScore;
 
         string json = JsonUtility.ToJson(data);
 
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
-    public void LoadName()
+    public void LoadNameAndScore()
     {
         string path = Application.persistentDataPath + "/savefile.json";
         if (File.Exists(path))
@@ -45,6 +53,8 @@ public class dataManager : MonoBehaviour
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
             playerName = data.playerName;
+            highScore = data.highScore;
+            highScoreName = data.highScoreName;
         }
     }
 
